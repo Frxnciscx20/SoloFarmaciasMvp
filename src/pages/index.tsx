@@ -5,7 +5,7 @@ export default function Header() {
     <header className="bg-red-600 text-white py-4 shadow-md sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold flex items-center gap-2">
-          <span>💊</span> <span>Solo Farmacias</span>
+          <span>💊</span> <span>Solo Farmacias Version 1</span>
         </h1>
         <nav className="flex items-center gap-3 text-sm">
           <a
