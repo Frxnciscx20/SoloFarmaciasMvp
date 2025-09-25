@@ -1,17 +1,29 @@
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { supabase } from '../lib/supabaseClient'
 import ProductoCard from '../components/ProductoCard'
 import Filtros from '../components/Filtros'
+import { User } from '@supabase/supabase-js'
+
+type Producto = {
+  nombre: string
+  precio: number
+  precio_normal: number
+  farmacia: string
+  url: string
+  imagen_url?: string
+  id_medicamento: number
+}
 
 export async function getServerSideProps() {
   const { data: productos, error } = await supabase.from('vista_productos').select('*')
   return { props: { productos: productos || [] } }
 }
 
-export default function Home({ productos }: { productos: any[] }) {
+export default function Home({ productos }: { productos: Producto[] }) {
   const [busqueda, setBusqueda] = useState('')
   const [farmacia, setFarmacia] = useState('')
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user))
@@ -54,8 +66,8 @@ export default function Home({ productos }: { productos: any[] }) {
               </>
             ) : (
               <>
-                <a href="/login" className="hover:underline">Iniciar sesión</a>
-                <a href="/registro" className="hover:underline">Registrarse</a>
+                <Link href="/login" className="hover:underline">Iniciar sesión</Link>
+                <Link href="/registro" className="hover:underline">Registrarse</Link>
               </>
             )}
           </div>
@@ -72,16 +84,16 @@ export default function Home({ productos }: { productos: any[] }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
           {filtrados.length > 0 ? (
-            filtrados.map((p, idx) => (
+            filtrados.map((p) => (
               <ProductoCard
-                key={idx}
+                key={p.id_medicamento}
                 nombre={p.nombre}
                 precio={p.precio}
                 precio_normal={p.precio_normal}
                 farmacia={p.farmacia}
                 url={p.url}
                 imagen_url={p.imagen_url}
-                id_medicamento={p.id_medicamento} // ✅ nuevo prop para historial
+                id_medicamento={p.id_medicamento}
                 link={`/producto/${p.id_medicamento}`}
               />
             ))

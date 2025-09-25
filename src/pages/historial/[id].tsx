@@ -11,6 +11,7 @@ import {
   CartesianGrid,
 } from 'recharts'
 import Link from 'next/link'
+import { User } from '@supabase/supabase-js'
 
 type HistorialData = {
   fecha: string
@@ -25,7 +26,7 @@ export default function HistorialPrecios() {
   const [nombreMedicamento, setNombreMedicamento] = useState('Cargando...')
   const [nombreFarmacia, setNombreFarmacia] = useState('No especificada')
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null) // ✅ tipo explícito
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user))
@@ -97,8 +98,8 @@ export default function HistorialPrecios() {
               </>
             ) : (
               <>
-                <a href="/login" className="hover:underline">Iniciar sesión</a>
-                <a href="/registro" className="hover:underline">Registrarse</a>
+                <Link href="/login" className="hover:underline">Iniciar sesión</Link>
+                <Link href="/registro" className="hover:underline">Registrarse</Link>
               </>
             )}
           </div>

@@ -7,7 +7,7 @@ type Props = {
   farmacia: string
   url: string
   link: string
-  imagen_url?: string
+  imagen_url?: string | null  // ✅ Cambiado aquí
   id_medicamento: number
 }
 
