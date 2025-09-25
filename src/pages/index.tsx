@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { supabase } from '../lib/supabaseClient'
 import ProductoCard from '../components/ProductoCard'
 import Filtros from '../components/Filtros'
-import { User } from '@supabase/supabase-js'
 
 type Producto = {
   nombre: string
@@ -15,6 +14,11 @@ type Producto = {
   id_medicamento: number
 }
 
+type SimpleUser = {
+  id: string
+  email: string
+}
+
 export async function getServerSideProps() {
   const { data: productos, error } = await supabase.from('vista_productos').select('*')
   return { props: { productos: productos || [] } }
@@ -23,17 +27,27 @@ export async function getServerSideProps() {
 export default function Home({ productos }: { productos: Producto[] }) {
   const [busqueda, setBusqueda] = useState('')
   const [farmacia, setFarmacia] = useState('')
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<SimpleUser | null>(null)
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    supabase.auth.getUser().then(({ data }) => {
+      const userData = data.user
+      if (userData?.id && userData?.email) {
+        setUser({ id: userData.id, email: userData.email })
+      }
+    })
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
+      const sessionUser = session?.user
+      if (sessionUser?.id && sessionUser?.email) {
+        setUser({ id: sessionUser.id, email: sessionUser.email })
+      } else {
+        setUser(null)
+      }
     })
 
     return () => {
-      listener.subscription.unsubscribe()
+      listener?.subscription?.unsubscribe()
     }
   }, [])
 

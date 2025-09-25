@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 type Props = {
   nombre: string
@@ -7,7 +8,7 @@ type Props = {
   farmacia: string
   url: string
   link: string
-  imagen_url?: string | null  // ✅ Cambiado aquí
+  imagen_url?: string | null
   id_medicamento: number
 }
 
@@ -24,16 +25,20 @@ export default function ProductoCard({
   return (
     <div className="bg-white rounded-xl shadow hover:shadow-xl transition p-4">
       <Link href={link} className="block">
-        <div className="w-full h-40 flex items-center justify-center mb-2 overflow-hidden rounded">
+        <div className="w-full h-40 relative mb-2 overflow-hidden rounded">
           {imagen_url ? (
-            <img
+            <Image
               src={imagen_url}
               alt={nombre}
-              className="object-contain h-full w-full"
+              fill
+              sizes="100%"
+              className="object-contain"
               loading="lazy"
             />
           ) : (
-            <div className="text-gray-400 text-sm">Sin imagen</div>
+            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+              Sin imagen
+            </div>
           )}
         </div>
         <h2 className="text-lg font-bold text-red-600 mb-1 hover:underline">{nombre}</h2>

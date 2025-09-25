@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabaseClient'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import ComentarioForm from '../../components/ComentarioForm'
+import { User } from '@supabase/supabase-js'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const id = context.params?.id
@@ -71,12 +72,14 @@ export default function ProductoDetalle({
 }) {
   const ahorro = producto.precio_normal - producto.precio
   const hayOferta = ahorro > 0
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
   const [alertaMensaje, setAlertaMensaje] = useState('')
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+    })
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
@@ -106,7 +109,7 @@ export default function ProductoDetalle({
         {
           id_usuario: user.id,
           id_medicamento: producto.id_medicamento,
-          precio_objetivo: producto.precio, // ✅ corregido
+          precio_objetivo: producto.precio,
         },
       ])
 
@@ -129,7 +132,7 @@ export default function ProductoDetalle({
             <Link href="/" className="hover:underline">Volver al inicio</Link>
             {user ? (
               <>
-                <span className="hidden sm:inline">👤 {user.email}</span>
+                <span className="hidden sm:inline">👤 {user.email ?? 'Usuario'}</span>
                 <button
                   onClick={handleLogout}
                   className="bg-white text-red-600 px-3 py-1 rounded hover:bg-red-100"
@@ -139,8 +142,8 @@ export default function ProductoDetalle({
               </>
             ) : (
               <>
-                <a href="/login" className="hover:underline">Iniciar sesión</a>
-                <a href="/registro" className="hover:underline">Registrarse</a>
+                <Link href="/login" className="hover:underline">Iniciar sesión</Link>
+                <Link href="/registro" className="hover:underline">Registrarse</Link>
               </>
             )}
           </div>
@@ -148,7 +151,6 @@ export default function ProductoDetalle({
       </header>
 
       <main className="max-w-7xl mx-auto p-6 bg-white rounded-xl shadow space-y-12 mt-6">
-        {/* Producto */}
         <div className="grid md:grid-cols-2 gap-8">
           <div className="flex justify-center items-start">
             <img
@@ -218,7 +220,6 @@ export default function ProductoDetalle({
           </div>
         </div>
 
-        {/* Comentarios */}
         <div>
           <h3 className="text-xl font-semibold mb-4">💬 Opiniones</h3>
 
