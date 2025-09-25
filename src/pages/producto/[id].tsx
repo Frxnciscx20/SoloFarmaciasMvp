@@ -4,6 +4,25 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import ComentarioForm from '../../components/ComentarioForm'
 import { User } from '@supabase/supabase-js'
+import Image from 'next/image'
+
+type Comentario = {
+  comentario: string
+  fecha: string
+  usuario: {
+    nombre: string
+  } | null
+}
+
+type Producto = {
+  id_medicamento: number
+  nombre: string
+  precio: number
+  precio_normal: number
+  farmacia: string
+  url: string
+  imagen_url?: string
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const id = context.params?.id
@@ -41,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
-function ComentarioItem({ comentario }: { comentario: any }) {
+function ComentarioItem({ comentario }: { comentario: Comentario }) {
   const [fechaLocal, setFechaLocal] = useState('')
 
   useEffect(() => {
@@ -67,8 +86,8 @@ export default function ProductoDetalle({
   producto,
   comentarios,
 }: {
-  producto: any
-  comentarios: any[]
+  producto: Producto
+  comentarios: Comentario[]
 }) {
   const ahorro = producto.precio_normal - producto.precio
   const hayOferta = ahorro > 0
@@ -153,12 +172,14 @@ export default function ProductoDetalle({
       <main className="max-w-7xl mx-auto p-6 bg-white rounded-xl shadow space-y-12 mt-6">
         <div className="grid md:grid-cols-2 gap-8">
           <div className="flex justify-center items-start">
-            <img
+            <Image
               src={
                 producto.imagen_url ||
                 `https://via.placeholder.com/400x300?text=${encodeURIComponent(producto.nombre)}`
               }
               alt={producto.nombre}
+              width={400}
+              height={300}
               className="rounded-xl shadow-lg max-h-[400px] object-contain"
             />
           </div>

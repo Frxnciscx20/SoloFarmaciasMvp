@@ -20,7 +20,7 @@ type SimpleUser = {
 }
 
 export async function getServerSideProps() {
-  const { data: productos, error } = await supabase.from('vista_productos').select('*')
+  const { data: productos } = await supabase.from('vista_productos').select('*')
   return { props: { productos: productos || [] } }
 }
 
