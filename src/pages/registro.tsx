@@ -13,23 +13,30 @@ export default function Registro() {
     e.preventDefault()
     setError('')
 
-    const { error: signUpError } = await supabase.auth.signUp({
+    // Crear cuenta directamente sin verificación por correo
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        // ya no se envía correo de confirmación, pero puedes guardar metadatos
+        data: { nombre },
+      },
     })
 
     if (signUpError) {
+      console.error(signUpError)
       setError(signUpError.message)
       return
     }
 
-    alert('Cuenta creada. Revisa tu correo para confirmar el registro.')
+    // Si se crea correctamente el usuario:
+    alert('Cuenta creada exitosamente ✅')
     router.push('/login')
   }
 
   return (
     <div className="max-w-md mx-auto p-6">
-      <h1 className="text-xl font-bold mb-4">Crear cuenta</h1>
+      <h1 className="text-xl font-bold mb-4 text-white">Crear cuenta</h1>
       <form onSubmit={handleRegistro} className="flex flex-col gap-4">
         <input
           type="text"
@@ -56,7 +63,10 @@ export default function Registro() {
           required
         />
         {error && <p className="text-red-600">{error}</p>}
-        <button type="submit" className="bg-red-600 text-white p-2 rounded">
+        <button
+          type="submit"
+          className="bg-red-600 hover:bg-red-700 text-white p-2 rounded"
+        >
           Registrarse
         </button>
       </form>

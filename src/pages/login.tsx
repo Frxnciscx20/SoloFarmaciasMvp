@@ -12,47 +12,46 @@ export default function Login() {
     e.preventDefault()
     setError('')
 
-    // Iniciar sesión
-    const { error: loginError } = await supabase.auth.signInWithPassword({
+    // Iniciar sesión con email y password
+    const { data: sessionData, error: loginError } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
 
     if (loginError) {
-      setError(loginError.message)
+      setError('Credenciales incorrectas o usuario no existente.')
+      console.error(loginError.message)
       return
     }
 
-    // Obtener información del usuario autenticado
-    const { data: userData, error: userError } = await supabase.auth.getUser()
-
-    if (userError || !userData.user) {
+    const user = sessionData.user
+    if (!user) {
       setError('No se pudo obtener información del usuario.')
       return
     }
 
-    const id = userData.user.id
-    const correo = userData.user.email
+    const id = user.id
+    const correo = user.email
+    const nombre = user.user_metadata?.nombre || 'Anónimo'
 
-    // Verificar si ya existe perfil en la tabla usuario
+    // Verificar si ya existe perfil en tabla usuario
     const { data: perfil, error: perfilError } = await supabase
       .from('usuario')
       .select('id_usuario')
       .eq('id_usuario', id)
-      .maybeSingle() // <- evita crash si no hay resultado
+      .maybeSingle()
 
     if (!perfil && !perfilError) {
       const { error: insertError } = await supabase.from('usuario').insert([
         {
           id_usuario: id,
-          nombre: 'Anónimo',
-          correo: correo || ''
-        }
+          nombre,
+          correo: correo || '',
+        },
       ])
 
       if (insertError) {
         console.error('Error al insertar usuario:', insertError.message)
-        // No detenemos el flujo, solo avisamos
       }
     }
 
@@ -62,7 +61,7 @@ export default function Login() {
 
   return (
     <div className="max-w-md mx-auto p-6">
-      <h1 className="text-xl font-bold mb-4">Iniciar sesión</h1>
+      <h1 className="text-xl font-bold mb-4 text-white">Iniciar sesión</h1>
       <form onSubmit={handleLogin} className="flex flex-col gap-4">
         <input
           type="email"
@@ -81,7 +80,7 @@ export default function Login() {
           required
         />
         {error && <p className="text-red-600">{error}</p>}
-        <button type="submit" className="bg-red-500 text-white p-2 rounded">
+        <button type="submit" className="bg-red-500 hover:bg-red-600 text-white p-2 rounded">
           Iniciar sesión
         </button>
       </form>
