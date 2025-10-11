@@ -83,7 +83,7 @@ export default function HistorialPrecios() {
     <div className="min-h-screen bg-gray-100 text-gray-800">
       <header className="bg-red-600 text-white px-6 py-4 shadow">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">💊 Comparador de Medicamentos</h1>
+          <h1 className="text-2xl font-bold">💊 SoloFarmacias</h1>
           <div className="flex items-center space-x-4 text-sm">
             <Link href="/" className="hover:underline">Volver al inicio</Link>
             {user ? (
