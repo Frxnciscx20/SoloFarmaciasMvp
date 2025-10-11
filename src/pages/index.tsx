@@ -66,7 +66,7 @@ export default function Home({ productos }: { productos: Producto[] }) {
     <div className="min-h-screen bg-gray-50 text-gray-800">
       <header className="bg-red-600 text-white py-4 shadow-md">
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">💊 Comparador de Medicamentos</h1>
+          <h1 className="text-2xl font-bold">💊 SoloFarmacias</h1>
           <div className="flex items-center space-x-4 text-sm">
             {user ? (
               <>
