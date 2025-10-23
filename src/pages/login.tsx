@@ -1,88 +1,100 @@
+'use client'
 import { useState } from 'react'
-import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
+import { supabase } from '@/lib/supabaseClient'
+import ThemeToggle from '@/components/ThemeToggle'
 
-export default function Login() {
+export default function LoginPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
+    setLoading(true)
+    setError(null)
 
-    // Iniciar sesión con email y password
-    const { data: sessionData, error: loginError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
 
-    if (loginError) {
-      setError('Credenciales incorrectas o usuario no existente.')
-      console.error(loginError.message)
+    setLoading(false)
+    if (error) {
+      setError(error.message)
       return
     }
 
-    const user = sessionData.user
-    if (!user) {
-      setError('No se pudo obtener información del usuario.')
-      return
-    }
-
-    const id = user.id
-    const correo = user.email
-    const nombre = user.user_metadata?.nombre || 'Anónimo'
-
-    // Verificar si ya existe perfil en tabla usuario
-    const { data: perfil, error: perfilError } = await supabase
-      .from('usuario')
-      .select('id_usuario')
-      .eq('id_usuario', id)
-      .maybeSingle()
-
-    if (!perfil && !perfilError) {
-      const { error: insertError } = await supabase.from('usuario').insert([
-        {
-          id_usuario: id,
-          nombre,
-          correo: correo || '',
-        },
-      ])
-
-      if (insertError) {
-        console.error('Error al insertar usuario:', insertError.message)
-      }
-    }
-
-    // Redirigir al home
-    router.push('/')
+    router.push('/') // redirige al home o dashboard
   }
 
   return (
-    <div className="max-w-md mx-auto p-6">
-      <h1 className="text-xl font-bold mb-4 text-white">Iniciar sesión</h1>
-      <form onSubmit={handleLogin} className="flex flex-col gap-4">
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <ThemeToggle />
+      <form
+        onSubmit={handleLogin}
+        className="w-full max-w-sm bg-secondary p-6 rounded-lg shadow-card"
+      >
+        <h1 className="text-2xl font-semibold text-center text-foreground mb-6">
+          Iniciar sesión
+        </h1>
+
+        {/* Correo */}
+        <label htmlFor="email" className="block text-sm text-foreground mb-1">
+          Correo
+        </label>
         <input
+          id="email"
           type="email"
-          placeholder="Correo"
+          placeholder="tu@correo.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 rounded"
+          className="w-full mb-4 rounded-md border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-white text-black"
           required
         />
+
+        {/* Contraseña */}
+        <label htmlFor="password" className="block text-sm text-foreground mb-1">
+          Contraseña
+        </label>
         <input
+          id="password"
           type="password"
-          placeholder="Contraseña"
+          placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 rounded"
+          className="w-full mb-4 rounded-md border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-white text-black"
           required
         />
-        {error && <p className="text-red-600">{error}</p>}
-        <button type="submit" className="bg-red-500 hover:bg-red-600 text-white p-2 rounded">
-          Iniciar sesión
+
+        {/* Error */}
+        {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
+
+        {/* Botón */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-primary text-white py-2 rounded-md hover:bg-[var(--color-primary-hover)] disabled:opacity-60"
+        >
+          {loading ? 'Ingresando…' : 'Entrar'}
         </button>
+
+        <p className="text-center text-sm text-foreground mt-4">
+          ¿No tienes cuenta?{' '}
+          <a href="/registro" className="text-primary hover:underline">
+            Regístrate
+          </a>
+        </p>
+        {/* 👇 Nuevo botón de volver al inicio */}
+        <div className="flex justify-center mt-4">
+          <a
+            href="/"
+            className="inline-block bg-secondary border border-border text-primary px-4 py-2 rounded-md 
+               hover:bg-[var(--color-primary-hover)] hover:text-white transition text-sm"
+          >
+            ← Volver al inicio
+          </a>
+        </div>
+
       </form>
     </div>
   )

@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
+/* 🎨 Paleta de colores base */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #B2D8B0; /* color base del fondo */
+  --foreground: #1a1a1a; /* color del texto principal */
+  --primary: #009e60; /* verde fuerte para botones o enlaces */
+  --secondary: #ffffff; /* fondo de tarjetas, formularios, etc. */
+  --border: #d1d5db; /* gris suave para bordes */
+  --input-text: #000000; /* color del texto dentro de inputs */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* 🌙 Modo oscuro opcional */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --secondary: #1e1e1e;
+    --border: #333;
+    --primary: #66bb6a; /* verde más suave para dark mode */
   }
 }
 
+/* 🎯 Definiciones globales de Tailwind v4 */
+@theme inline {
+  /* Colores */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  
+  --color-secondary: var(--secondary);
+  --color-border: var(--border);
+
+  /* Fuentes */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Extras */
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 🧩 Estilos base */
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* 💬 Inputs */
+input {
+  color: var(--input-text);
+  border-color: var(--border);
+}
+
+/* 🪶 Formularios y tarjetas */
+form {
+  background: var(--secondary);
+}
+
+[data-theme='dark'] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --secondary: #1e1e1e;
+  --border: #333;
+  --primary: #66bb6a;
+}
+
+[data-theme='light'] {
+  --background: #B2D8B0;
+  --foreground: #1a1a1a;
+  --secondary: #ffffff;
+  --border: #d1d5db;
+  --primary: #009e60;
+}
+
+/* 🔧 Forzar texto legible en inputs y selects */
+input, select, textarea {
+  color: #1a1a1a; /* gris oscuro legible */
+  background-color: #ffffff; /* fondo blanco */
+}
+
+[data-theme='dark'] input,
+[data-theme='dark'] select,
+[data-theme='dark'] textarea {
+  color: #f1f1f1; /* texto claro */
+  background-color: var(--secondary);
 }
