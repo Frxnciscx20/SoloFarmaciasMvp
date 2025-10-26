@@ -2,89 +2,74 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
+import { User } from '@supabase/supabase-js'
 import ThemeToggle from './ThemeToggle'
 
-type SimpleUser = {
-  id: string
-  email: string
-}
-
 export default function Navbar() {
-  const [user, setUser] = useState<SimpleUser | null>(null)
+  const [user, setUser] = useState<User | null>(null)
 
+  // 🔐 Detectar sesión activa en Supabase
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data } = await supabase.auth.getUser()
-      const userData = data.user
-      if (userData?.id && userData?.email) {
-        setUser({ id: userData.id, email: userData.email })
-      }
-    }
-
-    fetchUser()
-
+    supabase.auth.getUser().then(({ data }) => setUser(data.user))
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      const sessionUser = session?.user
-      setUser(sessionUser ? { id: sessionUser.id, email: sessionUser.email } : null)
+      setUser(session?.user ?? null)
     })
-
-    return () => listener?.subscription?.unsubscribe()
+    return () => listener.subscription.unsubscribe()
   }, [])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    window.location.reload()
+    window.location.href = '/'
   }
 
-  return (
-    <header className="bg-gradient-to-r from-primary to-emerald-600 text-white shadow-card transition-colors">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Logo */}
+    return (
+    <header className="sticky top-0 z-30 bg-secondary/70 backdrop-blur-md border-b border-border text-foreground transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+        
+        {/* 💊 Logo */}
         <Link
           href="/"
-          className="flex items-center space-x-2 text-2xl font-bold hover:opacity-90 transition"
+          className="text-xl font-semibold text-primary hover:text-[var(--color-primary-hover)] transition"
         >
-          <span role="img" aria-label="píldora">
-            💊
-          </span>
-          <span className="tracking-tight">SoloFarmacias</span>
+          💊 SoloFarmacias
         </Link>
 
-        {/* Controles */}
-        <div className="flex items-center space-x-4 text-sm">
-          {/* Botón de tema */}
-          <div className="hidden sm:block">
-            <ThemeToggle />
-          </div>
-
+        {/* 🌗 Controles alineados a la derecha */}
+        <div className="flex items-center gap-4 text-sm">
+          {/* Botones de sesión */}
           {user ? (
-            <div className="flex items-center space-x-3">
-              <span className="hidden sm:inline text-white/90">
-                👤 {user.email}
+            <>
+              <span className="hidden sm:inline opacity-80">
+                👤 {user.email ?? 'Usuario'}
               </span>
               <button
                 onClick={handleLogout}
-                className="bg-white text-primary px-4 py-1 rounded-md hover:bg-[var(--color-primary-hover)] hover:text-white font-medium transition"
+                className="px-3 py-1.5 rounded-md border border-border hover:bg-primary hover:text-white transition"
               >
                 Cerrar sesión
               </button>
-            </div>
+            </>
           ) : (
-            <div className="flex items-center space-x-3">
+            <>
               <Link
                 href="/login"
-                className="hover:text-gray-100 font-medium transition"
+                className="hover:text-primary transition-colors"
               >
                 Iniciar sesión
               </Link>
               <Link
                 href="/registro"
-                className="hover:text-gray-100 font-medium transition"
+                className="px-3 py-1.5 rounded-md bg-primary text-white hover:bg-[var(--color-primary-hover)] transition"
               >
                 Registrarse
               </Link>
-            </div>
+            </>
           )}
+
+          {/* 🔘 ThemeToggle al final, separado visualmente */}
+          <div className="ml-4 border-l border-border pl-4">
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </header>

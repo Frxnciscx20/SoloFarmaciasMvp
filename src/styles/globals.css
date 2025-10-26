@@ -1,90 +1,53 @@
 @import "tailwindcss";
 
-/* 🎨 Paleta de colores base */
 :root {
-  --background: #B2D8B0; /* color base del fondo */
-  --foreground: #1a1a1a; /* color del texto principal */
-  --primary: #009e60; /* verde fuerte para botones o enlaces */
-  --secondary: #ffffff; /* fondo de tarjetas, formularios, etc. */
-  --border: #d1d5db; /* gris suave para bordes */
-  --input-text: #000000; /* color del texto dentro de inputs */
+  /* 🎨 Paleta principal - Modo claro */
+  --background: #f0f8ff;         /* azul cielo muy suave */
+  --foreground: #1a1a1a;         /* texto principal oscuro */
+  --primary: #1e90ff;            /* azul brillante principal */
+  --primary-hover: #187bcd;      /* azul más oscuro al pasar el mouse */
+  --secondary: #ffffff;          /* fondos de tarjetas y formularios */
+  --border: #cbd5e1;             /* bordes suaves */
+  --accent: #e0f2fe;             /* detalles decorativos suaves */
 }
 
-/* 🌙 Modo oscuro opcional */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --secondary: #1e1e1e;
-    --border: #333;
-    --primary: #66bb6a; /* verde más suave para dark mode */
-  }
+  --background: #f0f8ff;
+  --foreground: #1a1a1a;
+  --primary: #1e90ff;
+  --primary-hover: #187bcd;
+  --secondary: #ffffff;
+  --border: #cbd5e1;
+  --accent: #e0f2fe;
 }
 
-/* 🎯 Definiciones globales de Tailwind v4 */
+.dark {
+  --background: #0d1117;
+  --foreground: #e6edf3;
+  --primary: #58a6ff;
+  --primary-hover: #1f6feb;
+  --secondary: #161b22;
+  --border: #30363d;
+  --accent: #1e3a8a;
+}
+}
+
+/* Tailwind "inline theme" para que tus clases lo usen */
 @theme inline {
-  /* Colores */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
-  
+  --color-primary-hover: var(--primary-hover);
   --color-secondary: var(--secondary);
   --color-border: var(--border);
-
-  /* Fuentes */
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-
-  /* Extras */
-  --radius-md: 0.5rem;
-  --radius-lg: 1rem;
-  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* 🧩 Estilos base */
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-/* 💬 Inputs */
-input {
-  color: var(--input-text);
-  border-color: var(--border);
-}
-
-/* 🪶 Formularios y tarjetas */
-form {
-  background: var(--secondary);
-}
-
-[data-theme='dark'] {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --secondary: #1e1e1e;
-  --border: #333;
-  --primary: #66bb6a;
-}
-
-[data-theme='light'] {
-  --background: #B2D8B0;
-  --foreground: #1a1a1a;
-  --secondary: #ffffff;
-  --border: #d1d5db;
-  --primary: #009e60;
-}
-
-/* 🔧 Forzar texto legible en inputs y selects */
-input, select, textarea {
-  color: #1a1a1a; /* gris oscuro legible */
-  background-color: #ffffff; /* fondo blanco */
-}
-
-[data-theme='dark'] input,
-[data-theme='dark'] select,
-[data-theme='dark'] textarea {
-  color: #f1f1f1; /* texto claro */
-  background-color: var(--secondary);
+  font-family: 'Inter', system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
