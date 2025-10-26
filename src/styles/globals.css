@@ -1,27 +1,31 @@
 @import "tailwindcss";
 
+/* 🎨 Paleta de colores personalizada */
 :root {
-  /* 🎨 Paleta principal - Modo claro */
-  --background: #f0f8ff;         /* azul cielo muy suave */
-  --foreground: #1a1a1a;         /* texto principal oscuro */
-  --primary: #1e90ff;            /* azul brillante principal */
-  --primary-hover: #187bcd;      /* azul más oscuro al pasar el mouse */
-  --secondary: #ffffff;          /* fondos de tarjetas y formularios */
-  --border: #cbd5e1;             /* bordes suaves */
-  --accent: #e0f2fe;             /* detalles decorativos suaves */
+  /* 🌤️ Modo claro */
+  --background: #f0f8ff;         /* Azul cielo muy suave */
+  --foreground: #1a1a1a;         /* Texto oscuro */
+  --primary: #1e90ff;            /* Azul brillante */
+  --primary-hover: #187bcd;      /* Azul más intenso al hover */
+  --secondary: #ffffff;          /* Fondo de tarjetas */
+  --border: #cbd5e1;             /* Bordes suaves */
+  --accent: #e0f2fe;             /* Detalles decorativos suaves */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-  --background: #f0f8ff;
-  --foreground: #1a1a1a;
-  --primary: #1e90ff;
-  --primary-hover: #187bcd;
-  --secondary: #ffffff;
-  --border: #cbd5e1;
-  --accent: #e0f2fe;
+    /* 🌙 Modo oscuro automático */
+    --background: #0d1117;       /* Fondo oscuro estilo GitHub */
+    --foreground: #e6edf3;       /* Texto claro */
+    --primary: #58a6ff;          /* Azul brillante */
+    --primary-hover: #1f6feb;    /* Azul más fuerte */
+    --secondary: #161b22;        /* Tarjetas oscuras */
+    --border: #30363d;           /* Bordes suaves oscuros */
+    --accent: #1e3a8a;           /* Azul profundo para detalles */
+  }
 }
 
+/* 🌘 Forzamos el modo oscuro manualmente con la clase `.dark` */
 .dark {
   --background: #0d1117;
   --foreground: #e6edf3;
@@ -31,9 +35,8 @@
   --border: #30363d;
   --accent: #1e3a8a;
 }
-}
 
-/* Tailwind "inline theme" para que tus clases lo usen */
+/* 🎨 Configuración de Tailwind inline */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -45,6 +48,7 @@
   --font-sans: var(--font-geist-sans);
 }
 
+/* 🧍 Estilo base del body */
 body {
   background-color: var(--background);
   color: var(--foreground);

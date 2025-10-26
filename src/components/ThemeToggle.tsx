@@ -4,40 +4,38 @@ import { useEffect, useState } from 'react'
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
-  // 🧠 Detectar tema del sistema o guardado en localStorage
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
-    if (savedTheme) {
-      setTheme(savedTheme)
-      document.documentElement.classList.toggle('dark', savedTheme === 'dark')
+    const saved = localStorage.getItem('theme') as 'light' | 'dark' | null
+    if (saved) {
+      setTheme(saved)
+      document.documentElement.classList.toggle('dark', saved === 'dark')
     } else {
-      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      setTheme(systemDark ? 'dark' : 'light')
-      document.documentElement.classList.toggle('dark', systemDark)
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      setTheme(prefersDark ? 'dark' : 'light')
+      document.documentElement.classList.toggle('dark', prefersDark)
     }
   }, [])
 
-  // 🎚 Cambiar tema
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    document.documentElement.classList.toggle('dark', newTheme === 'dark')
-    localStorage.setItem('theme', newTheme)
+  const toggle = () => {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    localStorage.setItem('theme', next)
+    document.documentElement.classList.toggle('dark', next === 'dark')
   }
 
   return (
     <button
-      onClick={toggleTheme}
-      className="flex items-center gap-2 px-3 py-1 rounded-md border border-border hover:bg-accent transition text-sm"
+      onClick={toggle}
+      className="flex items-center gap-2 bg-secondary border border-border text-foreground px-3 py-1.5 rounded-md hover:bg-accent transition-colors text-sm"
       title="Cambiar tema"
     >
-      {theme === 'light' ? (
+      {theme === 'dark' ? (
         <>
-          ☀️ <span className="hidden sm:inline">Claro</span>
+          <span role="img" aria-label="sol">☀️</span> Claro
         </>
       ) : (
         <>
-          🌙 <span className="hidden sm:inline">Oscuro</span>
+          <span role="img" aria-label="luna">🌙</span> Oscuro
         </>
       )}
     </button>
