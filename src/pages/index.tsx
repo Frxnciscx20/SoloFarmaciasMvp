@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import ProductoCard from '../components/ProductoCard'
 import Filtros from '../components/Filtros'
+import Navbar from '../components/Navbar'
 
 type Producto = {
   nombre: string
@@ -14,11 +14,6 @@ type Producto = {
   id_medicamento: number
 }
 
-type SimpleUser = {
-  id: string
-  email: string
-}
-
 export async function getServerSideProps() {
   const { data: productos } = await supabase.from('vista_productos').select('*')
   return { props: { productos: productos || [] } }
@@ -27,34 +22,6 @@ export async function getServerSideProps() {
 export default function Home({ productos }: { productos: Producto[] }) {
   const [busqueda, setBusqueda] = useState('')
   const [farmacia, setFarmacia] = useState('')
-  const [user, setUser] = useState<SimpleUser | null>(null)
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      const userData = data.user
-      if (userData?.id && userData?.email) {
-        setUser({ id: userData.id, email: userData.email })
-      }
-    })
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      const sessionUser = session?.user
-      if (sessionUser?.id && sessionUser?.email) {
-        setUser({ id: sessionUser.id, email: sessionUser.email })
-      } else {
-        setUser(null)
-      }
-    })
-
-    return () => {
-      listener?.subscription?.unsubscribe()
-    }
-  }, [])
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    window.location.reload()
-  }
 
   const filtrados = productos.filter(
     (p) =>
@@ -63,32 +30,16 @@ export default function Home({ productos }: { productos: Producto[] }) {
   )
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
-      <header className="bg-red-600 text-white py-4 shadow-md">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">💊 SoloFarmacias</h1>
-          <div className="flex items-center space-x-4 text-sm">
-            {user ? (
-              <>
-                <span className="hidden sm:inline">👤 {user.email}</span>
-                <button
-                  onClick={handleLogout}
-                  className="bg-white text-red-600 px-4 py-1 rounded hover:bg-red-100"
-                >
-                  Cerrar sesión
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/login" className="hover:underline">Iniciar sesión</Link>
-                <Link href="/registro" className="hover:underline">Registrarse</Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background text-foreground transition-colors">
+      {/* Navbar global */}
+      <Navbar />
 
-      <main className="container mx-auto px-4 py-8">
+      {/* Contenido principal */}
+      <main className="container mx-auto px-4 py-8 pt-20">
+        <h2 className="text-xl font-semibold mb-4 text-center">
+          Encuentra los mejores precios en farmacias 💊
+        </h2>
+
         <Filtros
           busqueda={busqueda}
           setBusqueda={setBusqueda}
@@ -118,6 +69,11 @@ export default function Home({ productos }: { productos: Producto[] }) {
           )}
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="mt-12 bg-secondary text-center text-sm text-foreground/70 py-4 border-t border-border">
+        <p>© {new Date().getFullYear()} SoloFarmacias — Proyecto Scraper</p>
+      </footer>
     </div>
   )
 }

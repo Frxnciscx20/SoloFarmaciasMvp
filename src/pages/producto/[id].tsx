@@ -1,10 +1,12 @@
+'use client'
 import { GetServerSideProps } from 'next'
-import { supabase } from '../../lib/supabaseClient'
+import { supabase } from '@/lib/supabaseClient'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import ComentarioForm from '../../components/ComentarioForm'
+import ComentarioForm from '@/components/ComentarioForm'
 import { User } from '@supabase/supabase-js'
 import Image from 'next/image'
+import Navbar from '@/components/Navbar'
 
 type Comentario = {
   comentario: string
@@ -70,9 +72,9 @@ function ComentarioItem({ comentario }: { comentario: Comentario }) {
   }, [comentario.fecha])
 
   return (
-    <li className="bg-gray-100 p-4 rounded shadow-sm">
-      <p className="text-gray-800">{comentario.comentario}</p>
-      <p className="text-xs text-gray-500 mt-1">
+    <li className="bg-[var(--color-accent)] p-4 rounded-lg shadow-sm">
+      <p className="text-foreground">{comentario.comentario}</p>
+      <p className="text-xs text-foreground/70 mt-1">
         {comentario.usuario?.nombre
           ? `Publicado por ${comentario.usuario.nombre}`
           : 'Publicado'}
@@ -96,9 +98,7 @@ export default function ProductoDetalle({
   const [alertaMensaje, setAlertaMensaje] = useState('')
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user)
-    })
+    supabase.auth.getUser().then(({ data }) => setUser(data.user))
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
@@ -106,11 +106,6 @@ export default function ProductoDetalle({
       listener.subscription.unsubscribe()
     }
   }, [])
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    window.location.href = '/'
-  }
 
   const handleAlerta = async () => {
     if (!user) return
@@ -143,35 +138,13 @@ export default function ProductoDetalle({
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800">
-      <header className="bg-red-600 text-white px-6 py-4 shadow">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">💊 SoloFarmacias</h1>
-          <div className="flex items-center space-x-4 text-sm">
-            <Link href="/" className="hover:underline">Volver al inicio</Link>
-            {user ? (
-              <>
-                <span className="hidden sm:inline">👤 {user.email ?? 'Usuario'}</span>
-                <button
-                  onClick={handleLogout}
-                  className="bg-white text-red-600 px-3 py-1 rounded hover:bg-red-100"
-                >
-                  Cerrar sesión
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/login" className="hover:underline">Iniciar sesión</Link>
-                <Link href="/registro" className="hover:underline">Registrarse</Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background text-foreground transition-colors">
+      <Navbar />
 
-      <main className="max-w-7xl mx-auto p-6 bg-white rounded-xl shadow space-y-12 mt-6">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="flex justify-center items-start">
+      <main className="max-w-6xl mx-auto mt-8 p-6 bg-secondary rounded-2xl shadow-xl border border-border transition-all hover:shadow-2xl">
+        {/* 🏷️ Detalle del producto */}
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          <div className="flex justify-center">
             <Image
               src={
                 producto.imagen_url ||
@@ -180,21 +153,21 @@ export default function ProductoDetalle({
               alt={producto.nombre}
               width={400}
               height={300}
-              className="rounded-xl shadow-lg max-h-[400px] object-contain"
+              className="rounded-xl shadow-lg object-contain max-h-[400px] bg-white p-2"
             />
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-3xl font-bold text-red-600">{producto.nombre}</h2>
-            <p className="text-gray-600 text-md">
+            <h2 className="text-3xl font-bold text-primary">{producto.nombre}</h2>
+            <p className="text-md">
               Farmacia: <strong>{producto.farmacia}</strong>
             </p>
 
             <div>
-              <p className="text-green-600 text-2xl font-semibold">
+              <p className="text-2xl font-semibold text-primary">
                 💲 Precio Oferta: ${producto.precio}
               </p>
-              <p className="text-sm text-gray-600 line-through">
+              <p className="text-sm text-foreground/70 line-through">
                 Precio Normal: ${producto.precio_normal}
               </p>
               {hayOferta && (
@@ -208,7 +181,7 @@ export default function ProductoDetalle({
               href={producto.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition"
+              className="inline-block mt-4 px-5 py-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white rounded-lg transition"
             >
               Ver producto en farmacia
             </a>
@@ -217,23 +190,23 @@ export default function ProductoDetalle({
               {user ? (
                 <>
                   <button
-                    className="w-full bg-gray-200 text-sm py-2 rounded hover:bg-gray-300"
+                    className="w-full bg-[var(--color-accent)] text-sm py-2 rounded-md hover:bg-[var(--color-primary-hover)] hover:text-white transition"
                     onClick={() => setMostrarFormulario((prev) => !prev)}
                   >
                     💬 Dar opinión de compra
                   </button>
                   <button
-                    className="w-full bg-gray-200 text-sm py-2 rounded hover:bg-gray-300"
+                    className="w-full bg-[var(--color-accent)] text-sm py-2 rounded-md hover:bg-[var(--color-primary-hover)] hover:text-white transition"
                     onClick={handleAlerta}
                   >
                     📩 Avisar cuando baje de precio
                   </button>
                   {alertaMensaje && (
-                    <p className="text-sm text-blue-600 mt-1">{alertaMensaje}</p>
+                    <p className="text-sm text-blue-600 mt-2 text-center">{alertaMensaje}</p>
                   )}
                 </>
               ) : (
-                <p className="text-gray-500 text-sm italic">
+                <p className="text-sm text-foreground/70 italic">
                   Inicia sesión para dejar un comentario o recibir alertas de precio.
                 </p>
               )}
@@ -241,8 +214,9 @@ export default function ProductoDetalle({
           </div>
         </div>
 
-        <div>
-          <h3 className="text-xl font-semibold mb-4">💬 Opiniones</h3>
+        {/* 💬 Opiniones */}
+        <div className="mt-12">
+          <h3 className="text-xl font-semibold mb-4 text-primary">💬 Opiniones</h3>
 
           {user && mostrarFormulario && (
             <ComentarioForm idMedicamento={producto.id_medicamento} />
@@ -255,8 +229,20 @@ export default function ProductoDetalle({
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-gray-500 mt-4">Aún no hay comentarios.</p>
+            <p className="text-sm text-foreground/70 mt-4">
+              Aún no hay comentarios.
+            </p>
           )}
+        </div>
+
+        {/* 🔙 Volver */}
+        <div className="text-center mt-10">
+          <Link
+            href="/"
+            className="inline-block bg-primary text-white px-6 py-2 rounded-lg hover:bg-[var(--color-primary-hover)] transition"
+          >
+            ← Volver al inicio
+          </Link>
         </div>
       </main>
     </div>

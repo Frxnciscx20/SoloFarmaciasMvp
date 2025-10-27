@@ -1,26 +1,45 @@
 @import "tailwindcss";
 
+/* Modo claro por defecto */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f0f8ff;         /* Azul cielo muy suave */
+  --foreground: #1a1a1a;         /* Texto oscuro */
+  --primary: #1e90ff;            /* Azul brillante */
+  --primary-hover: #187bcd;      /* Azul más intenso al hover */
+  --secondary: #ffffff;          /* Fondo de tarjetas */
+  --border: #cbd5e1;             /* Bordes suaves */
+  --accent: #e0f2fe;             /* Detalles decorativos suaves */
 }
 
+/* Modo oscuro controlado por data-theme */
+html[data-theme='dark'] {
+  --background: #0d1117;       /* Fondo oscuro estilo GitHub */
+  --foreground: #e6edf3;       /* Texto claro */
+  --primary: #58a6ff;          /* Azul brillante */
+  --primary-hover: #1f6feb;    /* Azul más fuerte */
+  --secondary: #161b22;        /* Tarjetas oscuras */
+  --border: #30363d;           /* Bordes suaves oscuros */
+  --accent: #1e3a8a;           /* Azul profundo */
+}
+
+/* Tailwind inline theme: mapea a variables que usan tus clases bg-*, text-* */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Transición global suave en html, por si cambian variables en root */
+html { transition: background-color 0.3s ease, color 0.3s ease; }
