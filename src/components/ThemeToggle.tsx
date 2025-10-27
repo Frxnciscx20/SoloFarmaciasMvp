@@ -4,23 +4,25 @@ import { useEffect, useState } from 'react'
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
+  // Cargar tema guardado o preferencia del sistema
   useEffect(() => {
     const saved = localStorage.getItem('theme') as 'light' | 'dark' | null
-    if (saved) {
-      setTheme(saved)
-      document.documentElement.classList.toggle('dark', saved === 'dark')
-    } else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      setTheme(prefersDark ? 'dark' : 'light')
-      document.documentElement.classList.toggle('dark', prefersDark)
-    }
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const initial = saved ?? (prefersDark ? 'dark' : 'light')
+    setTheme(initial)
+    // ⚠️ Limpia cualquier clase 'dark' que haya quedado de intentos anteriores
+    document.documentElement.classList.remove('dark')
+    // Usa data-theme como fuente de verdad
+    document.documentElement.dataset.theme = initial
   }, [])
 
   const toggle = () => {
     const next = theme === 'dark' ? 'light' : 'dark'
     setTheme(next)
     localStorage.setItem('theme', next)
-    document.documentElement.classList.toggle('dark', next === 'dark')
+    // ⚠️ Asegura que no dependemos de la clase 'dark'
+    document.documentElement.classList.remove('dark')
+    document.documentElement.dataset.theme = next
   }
 
   return (

@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
-/* 🎨 Paleta de colores personalizada */
+/* Modo claro por defecto */
 :root {
-  /* 🌤️ Modo claro */
   --background: #f0f8ff;         /* Azul cielo muy suave */
   --foreground: #1a1a1a;         /* Texto oscuro */
   --primary: #1e90ff;            /* Azul brillante */
@@ -12,31 +11,18 @@
   --accent: #e0f2fe;             /* Detalles decorativos suaves */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* 🌙 Modo oscuro automático */
-    --background: #0d1117;       /* Fondo oscuro estilo GitHub */
-    --foreground: #e6edf3;       /* Texto claro */
-    --primary: #58a6ff;          /* Azul brillante */
-    --primary-hover: #1f6feb;    /* Azul más fuerte */
-    --secondary: #161b22;        /* Tarjetas oscuras */
-    --border: #30363d;           /* Bordes suaves oscuros */
-    --accent: #1e3a8a;           /* Azul profundo para detalles */
-  }
+/* Modo oscuro controlado por data-theme */
+html[data-theme='dark'] {
+  --background: #0d1117;       /* Fondo oscuro estilo GitHub */
+  --foreground: #e6edf3;       /* Texto claro */
+  --primary: #58a6ff;          /* Azul brillante */
+  --primary-hover: #1f6feb;    /* Azul más fuerte */
+  --secondary: #161b22;        /* Tarjetas oscuras */
+  --border: #30363d;           /* Bordes suaves oscuros */
+  --accent: #1e3a8a;           /* Azul profundo */
 }
 
-/* 🌘 Forzamos el modo oscuro manualmente con la clase `.dark` */
-.dark {
-  --background: #0d1117;
-  --foreground: #e6edf3;
-  --primary: #58a6ff;
-  --primary-hover: #1f6feb;
-  --secondary: #161b22;
-  --border: #30363d;
-  --accent: #1e3a8a;
-}
-
-/* 🎨 Configuración de Tailwind inline */
+/* Tailwind inline theme: mapea a variables que usan tus clases bg-*, text-* */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -48,10 +34,12 @@
   --font-sans: var(--font-geist-sans);
 }
 
-/* 🧍 Estilo base del body */
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: 'Inter', system-ui, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Transición global suave en html, por si cambian variables en root */
+html { transition: background-color 0.3s ease, color 0.3s ease; }
