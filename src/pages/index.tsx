@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { supabase } from '../lib/supabaseClient'
 import ProductoCard from '../components/ProductoCard'
 import Filtros from '../components/Filtros'
+import Layout from '../components/Layout';
 
 type Producto = {
   nombre: string
@@ -15,7 +16,7 @@ type Producto = {
 }
 
 type SimpleUser = {
-  id: string
+id: string
   email: string
 }
 
@@ -62,62 +63,40 @@ export default function Home({ productos }: { productos: Producto[] }) {
       (farmacia === '' || p.farmacia.toLowerCase().includes(farmacia.toLowerCase()))
   )
 
-  return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
-      <header className="bg-red-600 text-white py-4 shadow-md">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">💊 SoloFarmacias</h1>
-          <div className="flex items-center space-x-4 text-sm">
-            {user ? (
-              <>
-                <span className="hidden sm:inline">👤 {user.email}</span>
-                <button
-                  onClick={handleLogout}
-                  className="bg-white text-red-600 px-4 py-1 rounded hover:bg-red-100"
-                >
-                  Cerrar sesión
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/login" className="hover:underline">Iniciar sesión</Link>
-                <Link href="/registro" className="hover:underline">Registrarse</Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+return (
+    <Layout>
+        <main className="container mx-auto px-4 py-8">
+            {/* Contenido de Filtros y ProductoCard que se mantiene */}
+            <Filtros 
+                busqueda={busqueda}
+                setBusqueda={setBusqueda}
+                farmacia={farmacia}
+                setFarmacia={setFarmacia}
+            />
 
-      <main className="container mx-auto px-4 py-8">
-        <Filtros
-          busqueda={busqueda}
-          setBusqueda={setBusqueda}
-          farmacia={farmacia}
-          setFarmacia={setFarmacia}
-        />
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {filtrados.length > 0 ? (
-            filtrados.map((p) => (
-              <ProductoCard
-                key={p.id_medicamento}
-                nombre={p.nombre}
-                precio={p.precio}
-                precio_normal={p.precio_normal}
-                farmacia={p.farmacia}
-                url={p.url}
-                imagen_url={p.imagen_url}
-                id_medicamento={p.id_medicamento}
-                link={`/producto/${p.id_medicamento}`}
-              />
-            ))
-          ) : (
-            <p className="text-center col-span-full text-gray-500">
-              No se encontraron resultados.
-            </p>
-          )}
-        </div>
-      </main>
-    </div>
-  )
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+              {filtrados.length > 0 ? (
+                filtrados.map((p) => (
+                  <ProductoCard
+                    key={p.id_medicamento}
+                    nombre={p.nombre}
+                    precio={p.precio}
+                    precio_normal={p.precio_normal}
+                    farmacia={p.farmacia}
+                    url={p.url}
+                    imagen_url={p.imagen_url}
+                    id_medicamento={p.id_medicamento}
+                    link={`/producto/${p.id_medicamento}`}
+                  />
+                ))
+              ) : (
+                <p className="text-center col-span-full text-gray-500">
+                  No se encontraron resultados.
+                </p>
+              )}
+            </div>
+            {/* Fin del Contenido que se mantiene */}
+        </main>
+    </Layout>
+)
 }
