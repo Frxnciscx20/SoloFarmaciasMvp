@@ -1,74 +1,116 @@
 import { useState } from 'react'
-import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
+import { supabase } from '@/lib/supabaseClient'
+import ThemeToggle from '@/components/ThemeToggle'
 
-export default function Registro() {
+export default function RegistroPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [nombre, setNombre] = useState('')
-  const [error, setError] = useState('')
-  const router = useRouter()
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
-  const handleRegistro = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
+    setError(null)
+    setSuccess(null)
 
-    // Crear cuenta directamente sin verificación por correo
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        // ya no se envía correo de confirmación, pero puedes guardar metadatos
-        data: { nombre },
-      },
-    })
-
-    if (signUpError) {
-      console.error(signUpError)
-      setError(signUpError.message)
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden.')
       return
     }
 
-    // Si se crea correctamente el usuario:
-    alert('Cuenta creada exitosamente ✅')
-    router.push('/login')
+    setLoading(true)
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    })
+    setLoading(false)
+
+    if (error) {
+      setError(error.message)
+    } else {
+      setSuccess('Cuenta creada correctamente. Revisa tu correo para confirmar tu registro.')
+      setTimeout(() => router.push('/login'), 2500)
+    }
   }
 
   return (
-    <div className="max-w-md mx-auto p-6">
-      <h1 className="text-xl font-bold mb-4 text-white">Crear cuenta</h1>
-      <form onSubmit={handleRegistro} className="flex flex-col gap-4">
+    <div className="relative min-h-screen flex items-center justify-center bg-background transition-colors">
+      {/* Botón modo oscuro/claro */}
+      <ThemeToggle />
+
+      <form
+        onSubmit={handleRegister}
+        className="w-full max-w-sm bg-secondary p-6 rounded-lg shadow-card"
+      >
+        <h1 className="text-2xl font-semibold text-center text-foreground mb-6">
+          Crear cuenta
+        </h1>
+
+        {/* Email */}
+        <label htmlFor="email" className="block text-sm text-foreground mb-1">
+          Correo
+        </label>
         <input
-          type="text"
-          placeholder="Tu nombre"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          className="border p-2 rounded"
-          required
-        />
-        <input
+          id="email"
           type="email"
-          placeholder="Correo"
+          placeholder="tu@correo.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 rounded"
+          className="w-full mb-4 rounded-md border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-white text-black"
           required
         />
+
+        {/* Contraseña */}
+        <label htmlFor="password" className="block text-sm text-foreground mb-1">
+          Contraseña
+        </label>
         <input
+          id="password"
           type="password"
-          placeholder="Contraseña"
+          placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 rounded"
+          className="w-full mb-4 rounded-md border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-white text-black"
           required
         />
-        {error && <p className="text-red-600">{error}</p>}
+
+        {/* Confirmar contraseña */}
+        <label htmlFor="confirmPassword" className="block text-sm text-foreground mb-1">
+          Confirmar contraseña
+        </label>
+        <input
+          id="confirmPassword"
+          type="password"
+          placeholder="••••••••"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="w-full mb-4 rounded-md border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-white text-black"
+          required
+        />
+
+        {/* Mensajes */}
+        {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
+        {success && <p className="text-green-600 text-sm mb-3">{success}</p>}
+
+        {/* Botón */}
         <button
           type="submit"
-          className="bg-red-600 hover:bg-red-700 text-white p-2 rounded"
+          disabled={loading}
+          className="w-full bg-primary text-white py-2 rounded-md hover:bg-[var(--color-primary-hover)] disabled:opacity-60"
         >
-          Registrarse
+          {loading ? 'Registrando…' : 'Registrarme'}
         </button>
+
+        <p className="text-center text-sm text-foreground mt-4">
+          ¿Ya tienes cuenta?{' '}
+          <a href="/login" className="text-primary hover:underline">
+            Inicia sesión
+          </a>
+        </p>
       </form>
     </div>
   )

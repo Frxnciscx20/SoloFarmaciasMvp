@@ -22,47 +22,81 @@ export default function ProductoCard({
   imagen_url,
   id_medicamento
 }: Props) {
+  const ahorro = precio_normal - precio
+  const hayOferta = ahorro > 0
+
   return (
-    <div className="bg-white rounded-xl shadow hover:shadow-xl transition p-4">
-      <Link href={link} className="block">
-        <div className="w-full h-40 relative mb-2 overflow-hidden rounded">
+    <div
+      className="bg-secondary/70 backdrop-blur-sm border border-border 
+                 rounded-2xl shadow-sm hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)] hover:border-primary/60 
+                 transition-all duration-300 p-4 flex flex-col justify-between 
+                 transform hover:-translate-y-2 hover:scale-[1.02]"
+    >
+      {/* 🖼 Imagen y nombre */}
+      <Link href={link} className="block group">
+        <div className="w-full h-40 relative mb-3 overflow-hidden rounded-lg bg-secondary/80 flex items-center justify-center">
           {imagen_url ? (
             <Image
               src={imagen_url}
               alt={nombre}
               fill
               sizes="100%"
-              className="object-contain"
+              className="object-contain group-hover:scale-105 transition-transform duration-300"
               loading="lazy"
             />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-full text-foreground/60 text-sm">
               Sin imagen
             </div>
           )}
         </div>
-        <h2 className="text-lg font-bold text-red-600 mb-1 hover:underline">{nombre}</h2>
+        <h2
+          className="text-base sm:text-lg font-semibold text-primary 
+                     group-hover:text-[var(--primary-hover)] transition-colors"
+        >
+          {nombre}
+        </h2>
       </Link>
 
-      <p className="text-sm text-gray-500">Farmacia: {farmacia}</p>
-      <p className="text-green-600 font-semibold">💲 Precio Oferta: ${precio}</p>
-      <p className="text-sm text-gray-500 line-through">Precio Normal: ${precio_normal}</p>
+      {/* 🏪 Detalle del producto */}
+      <div className="mt-2 flex-1">
+        <p className="text-sm text-foreground/70 mb-1">
+          🏥 <strong>{farmacia}</strong>
+        </p>
 
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sm text-blue-600 hover:underline mt-2 inline-block"
-      >
-        Ver producto en farmacia
-      </a>
+        <p className="text-green-600 font-semibold text-sm sm:text-base">
+          💲 Precio Oferta: ${precio.toLocaleString('es-CL')}
+        </p>
 
-      <Link
-        href={`/historial/${id_medicamento}`}
-        className="text-sm text-red-500 hover:underline mt-2 block"
-      >
-        📈 Ver historial de precios
-      </Link>
+        <p className="text-sm text-foreground/60 line-through">
+          Precio Normal: ${precio_normal.toLocaleString('es-CL')}
+        </p>
+
+        {hayOferta && (
+          <p className="text-xs text-blue-500 mt-1">
+            🔻 Ahorro de ${ahorro.toLocaleString('es-CL')}
+          </p>
+        )}
+      </div>
+
+      {/* 🔗 Enlaces */}
+      <div className="mt-3 space-y-1">
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-primary hover:text-[var(--primary-hover)] hover:underline transition"
+        >
+          Ver producto en farmacia
+        </a>
+
+        <Link
+          href={`/historial/${id_medicamento}`}
+          className="text-sm text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-1 transition"
+        >
+          📈 Ver historial de precios
+        </Link>
+      </div>
     </div>
   )
 }
