@@ -1,7 +1,7 @@
 'use client'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { supabase } from '../../lib/supabaseClient'
+import { supabase } from '@/lib/supabaseClient'
 import {
   LineChart,
   Line,
@@ -12,7 +12,6 @@ import {
   CartesianGrid,
 } from 'recharts'
 import Navbar from '@/components/Navbar'
-import { User } from '@supabase/supabase-js'
 import Link from 'next/link'
 
 type HistorialData = {
@@ -28,22 +27,11 @@ export default function HistorialPrecios() {
   const [nombreMedicamento, setNombreMedicamento] = useState('Cargando...')
   const [nombreFarmacia, setNombreFarmacia] = useState('No especificada')
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<User | null>(null)
 
-  // 🔹 Cargar usuario
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-    return () => {
-      listener.subscription.unsubscribe()
-    }
-  }, [])
-
-  // 🔹 Cargar historial de precios
+  // 🔹 Cargar historial de precios desde Supabase
   useEffect(() => {
     if (!id) return
+
     const fetchData = async () => {
       setLoading(true)
       const idNum = Number(id)
@@ -80,21 +68,24 @@ export default function HistorialPrecios() {
     <div className="min-h-screen bg-background text-foreground transition-colors">
       <Navbar />
 
-      <main className="max-w-5xl mx-auto p-6 mt-8 bg-[var(--card-bg)] rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl">
+      <main className="max-w-5xl mx-auto p-6 mt-8 bg-secondary rounded-2xl shadow-xl border border-border transition-all duration-300 hover:shadow-2xl">
+        {/* Encabezado */}
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold text-primary mb-2">
             📈 Historial de Precios
           </h2>
           <p className="text-lg">
-            Medicamento: <span className="font-semibold">{nombreMedicamento}</span>
+            Medicamento:{' '}
+            <span className="font-semibold">{nombreMedicamento}</span>
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-foreground/70">
             Farmacia: <span className="font-medium">{nombreFarmacia}</span>
           </p>
         </div>
 
+        {/* Contenido principal */}
         {loading ? (
-          <p className="text-center text-gray-500">Cargando historial...</p>
+          <p className="text-center text-foreground/70">Cargando historial...</p>
         ) : historial.length > 0 ? (
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={historial}>
@@ -106,8 +97,8 @@ export default function HistorialPrecios() {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'var(--card-bg)',
-                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--color-secondary)',
+                  border: '1px solid var(--color-border)',
                   borderRadius: '8px',
                 }}
                 formatter={(value: number, name: string) => {
@@ -139,15 +130,17 @@ export default function HistorialPrecios() {
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <p className="text-center text-gray-500">
+          <p className="text-center text-foreground/70">
             No hay historial de precios disponible.
           </p>
         )}
 
+        {/* Botón de volver */}
         <div className="text-center mt-8">
           <Link
             href={`/producto/${id}`}
-            className="inline-block bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/80 transition-colors"
+            className="inline-block bg-primary text-white px-6 py-2 rounded-lg 
+                       hover:bg-[var(--color-primary-hover)] transition-colors"
           >
             ← Volver al producto
           </Link>
