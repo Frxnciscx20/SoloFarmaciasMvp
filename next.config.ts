@@ -6,12 +6,13 @@ const nextConfig = {
     domains: [
       'www.farmaciasahumada.cl',
       'www.cruzverde.cl',
+      'beta.cruzverde.cl', // ✅ agregado
       'www.farmaciasimi.cl',
-      'static.salcobrandonline.cl', // ✅ nuevo dominio agregado
+      'static.salcobrandonline.cl',
       'via.placeholder.com',
-      'your-supabase-url.supabase.co' // reemplázalo con tu dominio real de supabase
+      'your-supabase-url.supabase.co'
     ],
   },
 }
 
-module.exports = nextConfig
+module.exports = nextConfig;

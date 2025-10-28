@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link' // ✅ Import necesario para reemplazar <a>
 import { supabase } from '@/lib/supabaseClient'
 import ThemeToggle from '@/components/ThemeToggle'
 
@@ -88,20 +89,20 @@ export default function LoginPage() {
         {/* Registro */}
         <p className="text-center text-sm text-foreground mt-4">
           ¿No tienes cuenta?{' '}
-          <a href="/registro" className="text-primary hover:underline">
+          <Link href="/registro" className="text-primary hover:underline">
             Regístrate
-          </a>
+          </Link>
         </p>
 
         {/* Volver al inicio */}
         <div className="flex justify-center mt-4">
-          <a
+          <Link
             href="/"
             className="inline-block border border-border text-primary px-4 py-2 rounded-md 
                        hover:bg-[var(--color-primary-hover)] hover:text-white transition text-sm"
           >
             ← Volver al inicio
-          </a>
+          </Link>
         </div>
       </form>
     </div>

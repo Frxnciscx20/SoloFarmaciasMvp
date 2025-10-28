@@ -1,5 +1,7 @@
+'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link' // ✅ Import necesario
 import { supabase } from '@/lib/supabaseClient'
 import ThemeToggle from '@/components/ThemeToggle'
 
@@ -23,10 +25,7 @@ export default function RegistroPage() {
     }
 
     setLoading(true)
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
+    const { error } = await supabase.auth.signUp({ email, password })
     setLoading(false)
 
     if (error) {
@@ -38,13 +37,15 @@ export default function RegistroPage() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-background transition-colors">
-      {/* Botón modo oscuro/claro */}
-      <ThemeToggle />
+    <div className="relative min-h-screen flex items-center justify-center bg-background text-foreground transition-colors">
+      {/* 🔘 Botón modo oscuro/claro */}
+      <div className="absolute top-6 right-6">
+        <ThemeToggle />
+      </div>
 
       <form
         onSubmit={handleRegister}
-        className="w-full max-w-sm bg-secondary p-6 rounded-lg shadow-card"
+        className="w-full max-w-sm bg-secondary p-6 rounded-xl shadow-md border border-border"
       >
         <h1 className="text-2xl font-semibold text-center text-foreground mb-6">
           Crear cuenta
@@ -60,7 +61,8 @@ export default function RegistroPage() {
           placeholder="tu@correo.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full mb-4 rounded-md border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-white text-black"
+          className="w-full mb-4 rounded-md border border-border px-3 py-2 outline-none 
+                     focus:ring-2 focus:ring-primary bg-[var(--color-secondary)] text-foreground"
           required
         />
 
@@ -74,7 +76,8 @@ export default function RegistroPage() {
           placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-4 rounded-md border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-white text-black"
+          className="w-full mb-4 rounded-md border border-border px-3 py-2 outline-none 
+                     focus:ring-2 focus:ring-primary bg-[var(--color-secondary)] text-foreground"
           required
         />
 
@@ -88,28 +91,31 @@ export default function RegistroPage() {
           placeholder="••••••••"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full mb-4 rounded-md border border-border px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-white text-black"
+          className="w-full mb-4 rounded-md border border-border px-3 py-2 outline-none 
+                     focus:ring-2 focus:ring-primary bg-[var(--color-secondary)] text-foreground"
           required
         />
 
         {/* Mensajes */}
-        {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
-        {success && <p className="text-green-600 text-sm mb-3">{success}</p>}
+        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+        {success && <p className="text-green-500 text-sm mb-3">{success}</p>}
 
         {/* Botón */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-primary text-white py-2 rounded-md hover:bg-[var(--color-primary-hover)] disabled:opacity-60"
+          className="w-full bg-primary text-white py-2 rounded-md hover:bg-[var(--color-primary-hover)] 
+                     transition disabled:opacity-60"
         >
           {loading ? 'Registrando…' : 'Registrarme'}
         </button>
 
+        {/* Link hacia login */}
         <p className="text-center text-sm text-foreground mt-4">
           ¿Ya tienes cuenta?{' '}
-          <a href="/login" className="text-primary hover:underline">
+          <Link href="/login" className="text-primary hover:underline">
             Inicia sesión
-          </a>
+          </Link>
         </p>
       </form>
     </div>
