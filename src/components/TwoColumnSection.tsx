@@ -17,7 +17,7 @@ const TwoColumnSection: React.FC<TwoColumnSectionProps> = ({
   title,
   description,
   imagePosition,
-  titleColor = 'text-red-600'
+  titleColor = 'text-blue-400'
 }) => {
   
   // Determina el orden de las columnas: La imagen es la primera (order-1) si la posición es 'left', 
@@ -39,14 +39,14 @@ const TwoColumnSection: React.FC<TwoColumnSectionProps> = ({
             layout="fill"
             objectFit="cover"
             priority // Para cargar las primeras imágenes más rápido
-            className="transition duration-500 ease-in-out transform hover:scale-105"
+            className="transition duration-900 ease-in-out transform hover:scale-105 rounded-xl"
           />
         </div>
       </div>
       
       {/* Columna del Texto */}
       <div className={`w-full md:w-6/12 p-4 ${textOrder}`}>
-        <h3 className={`text-3xl font-semibold mb-4 ${titleColor}`}>{title}</h3>
+        <h3 className={`text-3xl font-semibold mb-4 p-6 rounded-3xl shadow-xl inline-block ${titleColor}`}>{title}</h3>
         <p className="text-gray-600 leading-relaxed text-lg">{description}</p>
       </div>
       
