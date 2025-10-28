@@ -26,16 +26,29 @@ export default function Navbar() {
     <header className="sticky top-0 z-30 bg-secondary/70 backdrop-blur-md border-b border-border text-foreground transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         
-        {/* 💊 Logo */}
-        <Link
-          href="/"
-          className="text-xl font-semibold text-primary hover:text-[var(--color-primary-hover)] transition"
-        >
-          💊 SoloFarmacias
-        </Link>
+        {/* NUEVO GRUPO IZQUIERDO: Logo + Quiénes Somos */}
+        <div className="flex items-center gap-4"> 
+            
+            {/* 💊 Logo */}
+            <Link
+                href="/"
+                className="text-xl font-semibold text-primary hover:text-[var(--color-primary-hover)] transition"
+            >
+                💊 SoloFarmacias
+            </Link>
 
-        {/* 🌗 Controles alineados a la derecha */}
+            {/* ENLACE QUIÉNES SOMOS, pegado al logo */}
+            <Link
+                href="/quienes-somos"
+                className="hover:text-primary transition-colors font-medium text-sm pt-0.5" // Añadí text-sm y pt-0.5 para alineación
+            >
+                Quiénes Somos
+            </Link>
+        </div>
+        
+        {/* 🌗 GRUPO DERECHO: (Sesión + ThemeToggle) */}
         <div className="flex items-center gap-4 text-sm">
+
           {/* Botones de sesión */}
           {user ? (
             <>
