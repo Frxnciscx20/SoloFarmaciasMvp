@@ -5,7 +5,7 @@ import TwoColumnSection from '../components/TwoColumnSection'
 import { supabase } from '../lib/supabaseClient';
 import Link from 'next/link'; 
 import Image from 'next/image'; 
-//import RandomBanner from '../components/RandomBanner';
+import RandomBanner from '../components/RandomBanner';
 
 // ============================================
 // 1. TIPOS Y LÓGICA DEL SERVIDOR (getServerSideProps)
@@ -89,7 +89,7 @@ export default function QuienesSomos({ bannerProducts }: QuienesSomosProps) {
       <Navbar />
 
      {/* Banner de Productos Aleatorios */}
-      {/* <RandomBanner productos={bannerProducts} /> */}
+       <RandomBanner productos={bannerProducts} /> 
       
       <main className="container mx-auto px-4 py-8">
         
