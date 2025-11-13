@@ -2,8 +2,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import AlertSwitch from '@/components/AlertSwitch'
 
-// === Props del componente ===
 type Props = {
   nombre: string
   precio: number
@@ -28,13 +28,13 @@ export default function ProductoCard({
   const ahorro = precio_normal - precio
   const hayOferta = ahorro > 0
 
-  // --- Estado local ---
   const [user, setUser] = useState<any>(null)
-  const [alerting, setAlerting] = useState(false)
-  const [alertMessage, setAlertMessage] = useState<string | null>(null)
-  const [yaAlertado, setYaAlertado] = useState(false)
+  const [alertaActiva, setAlertaActiva] = useState(false)
+  const [alertId, setAlertId] = useState<number | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [mensaje, setMensaje] = useState<string | null>(null)
 
-  // --- Ver si el usuario está logeado ---
+  // --- Obtener usuario logeado ---
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getUser()
@@ -43,70 +43,72 @@ export default function ProductoCard({
     fetchUser()
   }, [])
 
-  // --- Revisar si YA EXISTE una alerta para este medicamento ---
+  // --- Revisar si YA existe una alerta ---
   useEffect(() => {
     if (!user) return
 
     const checkAlert = async () => {
-      const { data: existe } = await supabase
+      const { data } = await supabase
         .from('alertas')
-        .select('*')
+        .select('id, activo')
         .eq('id_usuario', user.id)
         .eq('id_medicamento', id_medicamento)
         .maybeSingle()
 
-      if (existe) {
-        setYaAlertado(true)
+      if (data) {
+        setAlertId(data.id)
+        setAlertaActiva(data.activo)
       }
     }
 
     checkAlert()
   }, [user, id_medicamento])
 
-  // --- Crear alerta ---
-  const activarAlerta = async () => {
+  // --- Cambiar estado del switch ---
+  const toggleSwitch = async () => {
     if (!user) return
-
-    setAlerting(true)
-    setAlertMessage(null)
+    setLoading(true)
+    setMensaje(null)
 
     try {
-      // 1) Verificar si ya existe alerta
-      const { data: existe } = await supabase
-        .from('alertas')
-        .select('*')
-        .eq('id_usuario', user.id)
-        .eq('id_medicamento', id_medicamento)
-        .maybeSingle()
+      // Caso 1: No existe alerta → crear
+      if (alertId === null) {
+        const { data, error } = await supabase
+          .from('alertas')
+          .insert({
+            id_usuario: user.id,
+            id_medicamento,
+            precio_objetivo: precio,
+            activo: true
+          })
+          .select()
+          .single()
 
-      if (existe) {
-        setYaAlertado(true)
-        setAlertMessage('Ya tienes una alerta activa para este medicamento.')
-        setAlerting(false)
+        if (error) throw error
+
+        setAlertId(data.id)
+        setAlertaActiva(true)
+        setMensaje("Alerta activada 🎉")
+        setLoading(false)
         return
       }
 
-      // 2) Crear alerta nueva
+      // Caso 2: ya existe → cambiar activo true/false
       const { error } = await supabase
         .from('alertas')
-        .insert({
-          id_usuario: user.id,
-          id_medicamento: id_medicamento,
-          precio_objetivo: precio
-        })
+        .update({ activo: !alertaActiva })
+        .eq('id', alertId)
 
-      if (error) {
-        setAlertMessage('Error al crear alerta: ' + error.message)
-      } else {
-        setYaAlertado(true)
-        setAlertMessage('Alerta activada correctamente 🎉')
-      }
+      if (error) throw error
 
-    } catch (err) {
-      setAlertMessage('Error inesperado.')
+      setAlertaActiva(!alertaActiva)
+      setMensaje(!alertaActiva ? "Alerta activada 🎉" : "Alerta desactivada")
+      
+    } catch {
+      setMensaje("Error al actualizar la alerta")
     }
 
-    setAlerting(false)
+    setLoading(false)
   }
 
   return (
@@ -161,33 +163,18 @@ export default function ProductoCard({
         )}
       </div>
 
-      {/* BOTÓN DE ALERTA */}
+      {/* SWITCH */}
       {user && (
-        <div className="mt-2">
+        <div className="mt-4 flex flex-col items-end">
+          <AlertSwitch
+            checked={alertaActiva}
+            onChange={toggleSwitch}
+            disabled={loading}
+          />
 
-          <div className="flex justify-end">
-            <button
-              onClick={activarAlerta}
-              disabled={alerting || yaAlertado}
-              className={`px-3 py-1.5 text-sm rounded-full flex items-center gap-2 shadow-sm transition
-                ${yaAlertado 
-                  ? "bg-gray-500 cursor-not-allowed text-white opacity-60" 
-                  : "bg-primary text-white hover:bg-[var(--primary-hover)]"}`}
-            >
-              {yaAlertado
-                ? "🔕 Alerta activa"
-                : alerting
-                  ? "Guardando…"
-                  : "🔔 Activar alerta"}
-            </button>
-          </div>
-
-          {alertMessage && (
-            <p className="text-xs mt-1 text-primary text-right animate-fadeIn">
-              {alertMessage}
-            </p>
+          {mensaje && (
+            <span className="text-xs text-primary mt-1">{mensaje}</span>
           )}
-
         </div>
       )}
     </div>
