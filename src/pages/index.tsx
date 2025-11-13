@@ -128,11 +128,9 @@ export default function Home({ productos, bannerProducts }: HomeProps) {
       
       <RandomBanner productos={bannerProducts} /> 
 
-      <main className="container mx-auto px-4 py-8 pt-20">
+      <main className="container mx-auto px-4">
         
-        <h2 className="text-xl font-semibold mb-4 text-center text-primary transition-colors">
-          Encuentra los mejores precios en farmacias 💊
-        </h2>
+        
 
         <Filtros
           busqueda={busqueda}

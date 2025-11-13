@@ -1,3 +1,4 @@
+'use client'
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
@@ -24,31 +25,49 @@ export default function ComentarioForm({ idMedicamento }: { idMedicamento: numbe
     } else {
       setMensaje('✅ Comentario enviado correctamente.')
       setComentario('')
-      window.location.reload() // 🔄 recarga la página para mostrar el nuevo comentario
+      setTimeout(() => window.location.reload(), 300)
     }
 
     setEnviando(false)
   }
 
   return (
-    <form onSubmit={handleEnviar} className="space-y-2">
+    <form onSubmit={handleEnviar} className="space-y-3">
+
+      {/* Etiqueta */}
+      <p className="text-sm text-foreground/80 font-medium flex items-center gap-1">
+        📝 Deja tu opinión
+      </p>
+
+      {/* Textarea */}
       <textarea
         value={comentario}
         onChange={(e) => setComentario(e.target.value)}
-        placeholder="Escribe tu opinión..."
-        className="w-full border border-gray-300 p-2 rounded"
+        placeholder="Escribe tu opinión…"
+        className="w-full rounded-xl p-3 bg-secondary border border-border 
+                   text-foreground focus:ring-2 focus:ring-primary 
+                   focus:outline-none transition resize-none"
         rows={3}
         required
       />
+
+      {/* Botón pequeño */}
       <button
         type="submit"
         disabled={enviando}
-        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+        className="px-4 py-1.5 bg-primary text-white rounded-lg text-sm 
+                   hover:bg-[var(--color-primary-hover)] transition 
+                   disabled:opacity-50 shadow-sm"
       >
-        {enviando ? 'Enviando...' : 'Enviar comentario'}
+        {enviando ? 'Enviando…' : 'Enviar'}
       </button>
+
       {mensaje && (
-        <p className={`text-sm ${mensaje.includes('✅') ? 'text-green-600' : 'text-red-600'}`}>
+        <p
+          className={`text-sm ${
+            mensaje.includes('✅') ? 'text-green-500' : 'text-red-500'
+          }`}
+        >
           {mensaje}
         </p>
       )}
