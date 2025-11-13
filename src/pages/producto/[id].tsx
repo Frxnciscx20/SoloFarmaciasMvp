@@ -7,6 +7,7 @@ import ComentarioForm from '@/components/ComentarioForm'
 import { User } from '@supabase/supabase-js'
 import Image from 'next/image'
 import Navbar from '@/components/Navbar'
+import { formatTimeForChile } from '@/utils/time'; // ⬅️ Paso 1: Importa la función
 
 type Comentario = {
   comentario: string
@@ -63,13 +64,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 function ComentarioItem({ comentario }: { comentario: Comentario }) {
-  const [fechaLocal, setFechaLocal] = useState('')
-
-  useEffect(() => {
-    if (comentario.fecha) {
-      setFechaLocal(new Date(comentario.fecha).toLocaleString())
-    }
-  }, [comentario.fecha])
+  // 1. Aplicamos la conversión directamente en la variable
+  const horaChilena = formatTimeForChile(comentario.fecha);
 
   return (
     <li className="bg-[var(--color-accent)] p-4 rounded-lg shadow-sm">
@@ -78,7 +74,8 @@ function ComentarioItem({ comentario }: { comentario: Comentario }) {
         {comentario.usuario?.nombre
           ? `Publicado por ${comentario.usuario.nombre}`
           : 'Publicado'}
-        {fechaLocal && ` el ${fechaLocal}`}
+        {/* Usamos la hora ya formateada de Chile */}
+        {horaChilena && ` el ${horaChilena}`}
       </p>
     </li>
   )
