@@ -7,6 +7,7 @@ import ComentarioForm from '@/components/ComentarioForm'
 import { User } from '@supabase/supabase-js'
 import Image from 'next/image'
 import Navbar from '@/components/Navbar'
+import { formatTimeForChile } from '@/utils/time'; // ⬅️ Paso 1: Importa la función
 import AlertSwitch from '@/components/AlertSwitch'
 
 type Comentario = {
@@ -64,39 +65,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 function ComentarioItem({ comentario }: { comentario: Comentario }) {
-  const [fechaLocal, setFechaLocal] = useState('')
-
-  useEffect(() => {
-    if (comentario.fecha) {
-      setFechaLocal(
-        new Date(comentario.fecha).toLocaleString('es-CL', {
-          dateStyle: 'short',
-          timeStyle: 'short',
-        })
-      )
-    }
-  }, [comentario.fecha])
+  // 1. Aplicamos la conversión directamente en la variable
+  const horaChilena = formatTimeForChile(comentario.fecha);
 
   const inicial =
     comentario.usuario?.nombre?.trim()?.charAt(0)?.toUpperCase() ?? 'U'
 
   return (
-    <li className="bg-secondary/80 border border-border rounded-xl p-4 shadow-sm flex gap-3">
-      {/* Avatar simple con inicial */}
-      <div className="h-9 w-9 rounded-full bg-primary/90 flex items-center justify-center text-white text-sm font-semibold shrink-0">
-        {inicial}
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-foreground">
-            {comentario.usuario?.nombre ?? 'Usuario'}
-          </p>
-          {fechaLocal && (
-            <p className="text-xs text-foreground/60">{fechaLocal}</p>
-          )}
-        </div>
-        <p className="text-sm mt-1 text-foreground">{comentario.comentario}</p>
-      </div>
+    <li className="bg-[var(--color-accent)] p-4 rounded-lg shadow-sm">
+      <p className="text-foreground">{comentario.comentario}</p>
+      <p className="text-xs text-foreground/70 mt-1">
+        {comentario.usuario?.nombre
+          ? `Publicado por ${comentario.usuario.nombre}`
+          : 'Publicado'}
+        {/* Usamos la hora ya formateada de Chile */}
+        {horaChilena && ` el ${horaChilena}`}
+      </p>
     </li>
   )
 }

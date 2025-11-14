@@ -1,12 +1,14 @@
 'use client'
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { useRouter } from 'next/router'
 
 export default function ComentarioForm({ idMedicamento }: { idMedicamento: number }) {
   const [comentario, setComentario] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [mensaje, setMensaje] = useState('')
-
+// ⬅️ Nueva inicialización: Tienes que usar el hook para obtener el objeto router
+  const router = useRouter()
   const handleEnviar = async (e: React.FormEvent) => {
     e.preventDefault()
     setEnviando(true)
@@ -18,6 +20,9 @@ export default function ComentarioForm({ idMedicamento }: { idMedicamento: numbe
       comentario,
       id_medicamento: idMedicamento,
       id_usuario: user.user?.id,
+      
+      // ✅ Solución: Inyectar la hora UTC perfecta
+      fecha: new Date().toISOString(), 
     })
 
     if (error) {
@@ -25,7 +30,7 @@ export default function ComentarioForm({ idMedicamento }: { idMedicamento: numbe
     } else {
       setMensaje('✅ Comentario enviado correctamente.')
       setComentario('')
-      setTimeout(() => window.location.reload(), 300)
+      router.replace(router.asPath) // 🔄 recarga la página para mostrar el nuevo comentario
     }
 
     setEnviando(false)
