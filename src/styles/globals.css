@@ -43,3 +43,26 @@ body {
 
 /* Transición global suave en html, por si cambian variables en root */
 html { transition: background-color 0.3s ease, color 0.3s ease; }
+
+/* Modo alto contraste */
+.high-contrast {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.high-contrast a {
+  color: #0ff !important;
+}
+
+.high-contrast button {
+  background-color: #222 !important;
+  color: #fff !important;
+}
+
+.high-contrast input,
+.high-contrast textarea,
+.high-contrast select {
+  background-color: #333 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
