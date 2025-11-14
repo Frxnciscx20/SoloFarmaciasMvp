@@ -8,7 +8,7 @@ import ThemeToggle from './ThemeToggle'
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null)
 
-  // 🔐 Detectar sesión activa en Supabase
+  // Detectar sesión activa
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user))
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -22,39 +22,54 @@ export default function Navbar() {
     window.location.href = '/'
   }
 
-    return (
+  return (
     <header className="sticky top-0 z-30 bg-secondary/70 backdrop-blur-md border-b border-border text-foreground transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-        
-        {/* NUEVO GRUPO IZQUIERDO: Logo + Quiénes Somos */}
-        <div className="flex items-center gap-4"> 
-            
-            {/* 💊 Logo */}
-            <Link
-                href="/"
-                className="text-xl font-semibold text-primary hover:text-[var(--color-primary-hover)] transition"
-            >
-                💊 SoloFarmacias
-            </Link>
+      
+      {/* CONTENEDOR RESPONSIVE */}
+      <div className="
+        w-full 
+        px-3 sm:px-4 md:px-6 
+        py-3 
+        max-w-full 
+        flex flex-col 
+        gap-3 
+        md:flex-row 
+        md:items-center 
+        md:justify-between
+      ">
 
-            {/* ENLACE QUIÉNES SOMOS, pegado al logo */}
-            <Link
-                href="/quienes-somos"
-                className="hover:text-primary transition-colors font-medium text-sm pt-0.5" // Añadí text-sm y pt-0.5 para alineación
-            >
-                Quiénes Somos
-            </Link>
+        {/* IZQUIERDA */}
+        <div className="flex items-center justify-between w-full md:w-auto">
+          
+          {/* Logo */}
+          <Link
+            href="/"
+            className="text-xl font-semibold text-primary hover:text-[var(--color-primary-hover)] transition"
+          >
+            💊 SoloFarmacias
+          </Link>
+
+          {/* Toggle Tema (visible en mobile aquí) */}
+          <div className="md:hidden">
+            <ThemeToggle />
+          </div>
         </div>
-        
-        {/* 🌗 GRUPO DERECHO: (Sesión + ThemeToggle) */}
-        <div className="flex items-center gap-4 text-sm">
 
-          {/* Botones de sesión */}
+        {/* ENLACES // se mueve a línea 2 en mobile */}
+        <div className="flex flex-wrap items-center gap-4 text-sm w-full md:w-auto justify-between md:justify-end">
+
+          {/* Quiénes Somos */}
+          <Link
+            href="/quienes-somos"
+            className="hover:text-primary transition-colors font-medium text-sm"
+          >
+            Quiénes Somos
+          </Link>
+
+          {/* SESIÓN */}
           {user ? (
             <>
-              <span className="hidden sm:inline opacity-80">
-                👤 {user.email ?? 'Usuario'}
-              </span>
+              <span className="opacity-80 hidden sm:inline">👤 {user.email}</span>
               <button
                 onClick={handleLogout}
                 className="px-3 py-1.5 rounded-md border border-border hover:bg-primary hover:text-white transition"
@@ -70,20 +85,23 @@ export default function Navbar() {
               >
                 Iniciar sesión
               </Link>
+
               <Link
                 href="/registro"
-                className="px-3 py-1.5 rounded-md bg-primary text-white hover:bg-[var(--color-primary-hover)] transition"
+                className="px-3 py-1.5 rounded-md bg-primary text-white hover:bg-[var(--color-primary-hover)] transition whitespace-nowrap"
               >
                 Registrarse
               </Link>
             </>
           )}
 
-          {/* 🔘 ThemeToggle al final, separado visualmente */}
-          <div className="ml-4 border-l border-border pl-4">
+          {/* Toggle Tema (visible en desktop aquí) */}
+          <div className="hidden md:block ml-4 border-l border-border pl-4">
             <ThemeToggle />
           </div>
+
         </div>
+
       </div>
     </header>
   )
