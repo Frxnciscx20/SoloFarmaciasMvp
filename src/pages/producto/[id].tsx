@@ -12,7 +12,7 @@ import AlertSwitch from '@/components/AlertSwitch';
 /* -----------------------------------
    CONFIG API (ajusta para producción)
 ------------------------------------ */
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
 
 /* -----------------------------------
    TIPOS
@@ -221,7 +221,7 @@ export default function ProductoDetalle({
     const nuevoEstado = !alertaActiva;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/alerts/toggle`, {
+      const response = await fetch(`${API_BASE_URL}/toggle`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
