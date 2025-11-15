@@ -221,7 +221,7 @@ export default function ProductoDetalle({
     const nuevoEstado = !alertaActiva;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/toggle`, {
+      const response = await fetch(`${API_BASE_URL}/api/alerts/toggle`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
