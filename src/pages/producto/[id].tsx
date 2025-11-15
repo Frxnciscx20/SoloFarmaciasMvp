@@ -246,11 +246,10 @@ export default function ProductoDetalle({
           : "🔕 Alerta desactivada."
       );
 
-    } catch (error: any) {
-      console.error("Error en toggle alerta:", error);
-      setAlertaMensaje(`❌ Error: ${error.message}`);
-    } finally {
-      setLoadingAlerta(false);
+    } catch (error: unknown) {
+      const err = error as Error;
+      console.error(err.message);
+      setAlertaMensaje(`❌ Error: ${err.message}`);
     }
   };
 
